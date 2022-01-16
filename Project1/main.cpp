@@ -1,15 +1,15 @@
-#include <glad/glad.h>
+﻿#include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
 #include <learnopengl/filesystem.h>
 #include <learnopengl/shader_m.h>
 #include <learnopengl/camera.h>
+#include <learnopengl/model.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 
 #include <iostream>
 
@@ -22,6 +22,13 @@ unsigned int loadTexture(const char* path);
 // settings
 const unsigned int SCR_WIDTH = 1000;
 const unsigned int SCR_HEIGHT = 750;
+
+// konfiguracja gierki
+
+const int shipCount = 6; // ilość statków do wyrenderowania
+const float fallingVel = 1.0f; // prędkość spadania obiektów
+const float respawnAlt = -1.5f; // dolny zakres wysokości jakie osiągają statki (używane do respawnu)
+const glm::vec3 shipModelScale = { 0.1f, 0.1f, 0.1f }; // wektor przechowujący skalę renderowania modelu statku
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -124,6 +131,27 @@ int main()
 	   -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 	};
 
+	//tablica przechowująca pozycje początkowe każdego ze statków
+	glm::vec3 shipSpawnPositions[shipCount] =
+	{
+		{-1.0f, 5.0f, 1.0f},
+		{1.1f, 5.5f, 1.2f},
+		{-0.5f, 4.9f, 2.4f},
+		{-2.5f, 5.25f, -3.4f},
+		{-3.5f, 6.0f, -2.1f},
+		{5.0f, 7.0f, -4.0f}
+
+	};
+
+	//tablica przechowująca aktualne pozycje na osi Y każdego  ze statków
+	float shipYPositions[shipCount];
+
+	// ustaw początkowe pozycje Y
+	for (int i = 0; i < shipCount; i++)
+	{
+		shipYPositions[i] = shipSpawnPositions[i].y;
+	}
+
 
 	// LIGHTING CUBE
 	unsigned int lightCubeVBO, lightCubeVAO;
@@ -151,8 +179,13 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
+	// wczytaj nasz model statku
+	Model objModel("../resources/ARV_Craft_Low_Poly.obj");
+
 	unsigned int grassDiffuseMap = loadTexture("../resources/textures/grass.jpg");
 	unsigned int jackolaternDiffuseMap = loadTexture("../resources/textures/jackolatern.jpg");
+	// tekstura metalowa dla statku
+	unsigned int metalDiffuseMap = loadTexture("../resources/textures/metal-texture-7.jpg");
 
 
 	lightingShader.use();
@@ -207,6 +240,23 @@ int main()
 		lightingShader.setMat4("projection", projection);
 		lightingShader.setMat4("view", view);
 
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, metalDiffuseMap);
+
+		for (int i = 0; i < shipCount; i++)
+		{
+			// jeśli przekroczy dolny limit ustaw poz y na początkową
+			if (shipYPositions[i] < respawnAlt) shipYPositions[i] = shipSpawnPositions[i].y;
+			shipYPositions[i] -= deltaTime * fallingVel;
+
+			// tu gdzieś logika czy jest zniszczony 
+
+			glm::mat4 shipModel = glm::mat4(1.0f);
+			shipModel = glm::translate(shipModel, glm::vec3(shipSpawnPositions[i].x, shipYPositions[i], shipSpawnPositions[i].z));
+			shipModel = glm::scale(shipModel, glm::vec3(shipModelScale.x, shipModelScale.y, shipModelScale.z));
+			lightingShader.setMat4("model", shipModel);
+			objModel.Draw(lightingShader);
+		}
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, grassDiffuseMap);
