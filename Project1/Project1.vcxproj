@@ -81,8 +81,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\krzyc\OpenGLlearn\spadanko_grafika\include;C:\Users\BlueD\source\repos\grafika_spadanko\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\BlueD\source\repos\grafika_spadanko\lib;C:\Users\krzyc\OpenGLlearn\spadanko_grafika\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\krzyc\OpenGL\grafika_spadanko\include;C:\Users\BlueD\source\repos\grafika_spadanko\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\krzyc\OpenGL\grafika_spadanko\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -154,6 +154,10 @@
     <None Include="6.light_cube.vert" />
     <None Include="6.multiple_lights.frag" />
     <None Include="6.multiple_lights.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="indicator.frag" />
+    <Text Include="indicator.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

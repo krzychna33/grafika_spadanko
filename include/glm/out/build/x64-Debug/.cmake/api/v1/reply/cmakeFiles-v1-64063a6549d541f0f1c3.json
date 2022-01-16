@@ -707,8 +707,8 @@
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "C:/Users/krzyc/OneDrive/Pulpit/Grafika komputerowa/opengl_test/include/glm/out/build/x64-Debug",
-		"source" : "C:/Users/krzyc/OneDrive/Pulpit/Grafika komputerowa/opengl_test/include/glm"
+		"build" : "C:/Users/krzyc/OpenGL/grafika_spadanko/include/glm/out/build/x64-Debug",
+		"source" : "C:/Users/krzyc/OpenGL/grafika_spadanko/include/glm"
 	},
 	"version" : 
 	{

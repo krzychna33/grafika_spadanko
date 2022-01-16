@@ -43,6 +43,10 @@ float lastFrame = 0.0f;
 glm::vec3 pointLightPos = glm::vec3(0.0f, 0.474f, 0.0f);
 
 
+int lightsAmount = 4;
+int radius = 6;
+float baseAngle = 0;
+
 int main()
 {
 	// glfw: initialize and configure
@@ -123,13 +127,15 @@ int main()
 	};
 
 	float floorVertices[] = {
-	   -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-		0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+	   -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  4.0f,
+		0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  4.0f,  4.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  4.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  4.0f,  0.0f,
 	   -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
-	   -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
+	   -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  4.0f
 	};
+
+
 
 	//tablica przechowująca pozycje początkowe każdego ze statków
 	glm::vec3 shipSpawnPositions[shipCount] =
@@ -208,19 +214,35 @@ int main()
 		lightingShader.setVec3("viewPos", camera.Position);
 		lightingShader.setFloat("material.shininess", 32.0f);
 
-		lightingShader.setVec3("dirLight.direction", 0.0f, -0.9f, -0.9f);
-		lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-		lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-		lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+		lightingShader.setVec3("dirLight.direction", 0.4f, -0.9f, 0.0f);
+		lightingShader.setVec3("dirLight.ambient", 0.1f, 0.1f, 0.1f);
+		lightingShader.setVec3("dirLight.diffuse", 0.0f, 0.0f, 0.0f);
+		lightingShader.setVec3("dirLight.specular", 0.0f, 0.0f, 0.0f);
 
-		// POINT LIGHT
-		lightingShader.setVec3("pointLights[0].position", pointLightPos);
-		lightingShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-		lightingShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-		lightingShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-		lightingShader.setFloat("pointLights[0].constant", 1.0f);
-		lightingShader.setFloat("pointLights[0].linear", 0.09);
-		lightingShader.setFloat("pointLights[0].quadratic", 0.032);
+		float angle = baseAngle;
+		for (int i = 0; i < lightsAmount; i++) {
+			float theta = glm::radians(angle);
+			float pointX = glm::cos(theta) * radius;
+			float pointY = glm::sin(theta) * radius;
+			printf("%.6f %.6f\n", pointX, pointY);
+			lightingShader.setVec3("pointLights[" + std::to_string(i) + "].position", glm::vec3(pointX, 2.0f, pointY));
+			lightingShader.setVec3("pointLights[" + std::to_string(i) + "].ambient", 0.0f, 0.0f, 0.0f);
+			lightingShader.setVec3("pointLights[" + std::to_string(i) + "].diffuse", 0.99f, 0.99f, 0.99f);
+			lightingShader.setVec3("pointLights[" + std::to_string(i) + "].specular", 1.0f, 1.0f, 1.0f);
+			lightingShader.setFloat("pointLights[" + std::to_string(i) + "].constant", 1.0f);
+			lightingShader.setFloat("pointLights[" + std::to_string(i) + "].linear", 0.09);
+			lightingShader.setFloat("pointLights[" + std::to_string(i) + "].quadratic", 0.032);
+			angle += 360 / lightsAmount;
+		}
+
+		//lightingShader.setVec3("pointLights[" + std::to_string(0) + "].position", pointLightPos);
+		//lightingShader.setVec3("pointLights[" + std::to_string(0) + "].ambient", 0.05f, 0.05f, 0.05f);
+		//lightingShader.setVec3("pointLights[" + std::to_string(0) + "].diffuse", 0.8f, 0.8f, 0.8f);
+		//lightingShader.setVec3("pointLights[" + std::to_string(0) + "].specular", 1.0f, 1.0f, 1.0f);
+		//lightingShader.setFloat("pointLights[" + std::to_string(0) + "].constant", 1.0f);
+		//lightingShader.setFloat("pointLights[" + std::to_string(0) + "].linear", 0.09);
+		//lightingShader.setFloat("pointLights[" + std::to_string(0) + "].quadratic", 0.032);
+
 
 		// SPOT LIGHT
 		lightingShader.setVec3("spotLight.position", pointLightPos);
@@ -263,7 +285,7 @@ int main()
 		glBindVertexArray(floorVAO);
 		glm::mat4 floorModel = glm::mat4(1.0f);
 		floorModel = glm::translate(floorModel, glm::vec3(0.0, -1.0, 0.0));
-		floorModel = glm::scale(floorModel, glm::vec3(2.0, 1.0, 2.0));
+		floorModel = glm::scale(floorModel, glm::vec3(12.0, 1.0, 12.0));
 		lightingShader.setMat4("model", floorModel);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
@@ -271,14 +293,26 @@ int main()
 		lightCubeShader.setMat4("projection", projection);
 		lightCubeShader.setMat4("view", view);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, jackolaternDiffuseMap);
-		glBindVertexArray(lightCubeVAO);
-		glm::mat4 lightCubeModel = glm::mat4(1.0f);
-		lightCubeModel = glm::scale(lightCubeModel, glm::vec3(0.20));
-		lightCubeModel = glm::translate(lightCubeModel, pointLightPos);
-		lightCubeShader.setMat4("model", lightCubeModel);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		angle = baseAngle;
+		for (int i = 0; i < lightsAmount; i++) {
+			float theta = glm::radians(angle);
+			float pointX = glm::cos(theta) * radius * 5;
+			float pointY = glm::sin(theta) * radius * 5;
+			
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, jackolaternDiffuseMap);
+			glBindVertexArray(lightCubeVAO);
+			glm::mat4 lightCubeModel = glm::mat4(1.0f);
+			lightCubeModel = glm::scale(lightCubeModel, glm::vec3(0.20, 1.0, 0.20));
+			lightCubeModel = glm::translate(lightCubeModel, glm::vec3(pointX, 2.0f, pointY));
+			lightCubeShader.setMat4("model", lightCubeModel);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+			angle += 360 / lightsAmount;
+		}
+
+
+
+		baseAngle += 0.05;
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

@@ -36,14 +36,14 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "glm_shared::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-glm_shared-Debug-9192503d02158ac3379b.json",
+					"jsonFile" : "target-glm_shared-Debug-7bc21dbb1705d31fe08d.json",
 					"name" : "glm_shared",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "glm_static::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-glm_static-Debug-c1d44de2a9d230052e7f.json",
+					"jsonFile" : "target-glm_static-Debug-2198395d3fb84066b5ba.json",
 					"name" : "glm_static",
 					"projectIndex" : 0
 				}
@@ -53,8 +53,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "C:/Users/krzyc/OneDrive/Pulpit/Grafika komputerowa/opengl_test/include/glm/out/build/x64-Debug",
-		"source" : "C:/Users/krzyc/OneDrive/Pulpit/Grafika komputerowa/opengl_test/include/glm"
+		"build" : "C:/Users/krzyc/OpenGL/grafika_spadanko/include/glm/out/build/x64-Debug",
+		"source" : "C:/Users/krzyc/OpenGL/grafika_spadanko/include/glm"
 	},
 	"version" : 
 	{
