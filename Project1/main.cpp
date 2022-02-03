@@ -19,6 +19,8 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 unsigned int loadTexture(const char* path);
 
+bool SPACE_PRESSED = false;
+
 // settings
 const unsigned int SCR_WIDTH = 1000;
 const unsigned int SCR_HEIGHT = 750;
@@ -79,7 +81,6 @@ int main()
 
 	Shader lightingShader("6.multiple_lights.vert", "6.multiple_lights.frag");
 	Shader lightCubeShader("6.light_cube.vert", "6.light_cube.frag");
-
 
 	float lightCubeVertices[] = {
 		// positions          // normals           // texture coords
@@ -148,6 +149,13 @@ int main()
 		{5.0f, 7.0f, -4.0f}
 
 	};
+
+	bool shipStatus[shipCount];
+
+	for (int i = 0; i < shipCount; i++)
+	{
+		shipStatus[i] = true;
+	}
 
 	//tablica przechowująca aktualne pozycje na osi Y każdego  ze statków
 	float shipYPositions[shipCount];
@@ -267,17 +275,35 @@ int main()
 
 		for (int i = 0; i < shipCount; i++)
 		{
-			// jeśli przekroczy dolny limit ustaw poz y na początkową
-			if (shipYPositions[i] < respawnAlt) shipYPositions[i] = shipSpawnPositions[i].y;
-			shipYPositions[i] -= deltaTime * fallingVel;
+			// jeśli przekroczy dolny limit ustaw poz y na początkową i bool renderowania true
+			if (shipYPositions[i] < respawnAlt)
+			{
+				shipYPositions[i] = shipSpawnPositions[i].y;
+				shipStatus[i] = true;
+			}
 
-			// tu gdzieś logika czy jest zniszczony 
+			shipYPositions[i] -= deltaTime * fallingVel;
 
 			glm::mat4 shipModel = glm::mat4(1.0f);
 			shipModel = glm::translate(shipModel, glm::vec3(shipSpawnPositions[i].x, shipYPositions[i], shipSpawnPositions[i].z));
 			shipModel = glm::scale(shipModel, glm::vec3(shipModelScale.x, shipModelScale.y, shipModelScale.z));
 			lightingShader.setMat4("model", shipModel);
-			objModel.Draw(lightingShader);
+
+			// rzutuj pozycje obiektu z world space na screen space
+			glm::vec4 clipSpacePos = projection * (view * glm::vec4(shipSpawnPositions[i].x, shipYPositions[i], shipSpawnPositions[i].z, 1.0f));
+			glm::vec3 ndcSpacePos = glm::vec3(clipSpacePos.x / clipSpacePos.w, clipSpacePos.y / clipSpacePos.w, clipSpacePos.z / clipSpacePos.w);
+			glm::vec2 windowSpacePos = (glm::vec2(ndcSpacePos.x + 1.0f, ndcSpacePos.y + 1.0f) / 2.0f) * glm::vec2(SCR_WIDTH, SCR_HEIGHT);
+
+			// jesli obiekt jest na srodku rekranu i gracz wciska spacje - zestrzel
+			if (pow(windowSpacePos.x - SCR_WIDTH / 2.0f, 2.0f) + pow(windowSpacePos.y - SCR_HEIGHT / 2.0f, 2.0f) < 5000.0f && SPACE_PRESSED)
+			{
+				shipStatus[i] = false;
+			}
+
+			if(shipStatus[i])
+			{
+				objModel.Draw(lightingShader);
+			}
 		}
 
 		glActiveTexture(GL_TEXTURE0);
@@ -313,7 +339,6 @@ int main()
 
 
 		baseAngle += 0.05;
-
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -337,6 +362,8 @@ void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+
+	SPACE_PRESSED = (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS);
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, deltaTime);

@@ -81,8 +81,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\krzyc\OpenGL\grafika_spadanko\include;C:\Users\BlueD\source\repos\grafika_spadanko\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\krzyc\OpenGL\grafika_spadanko\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\krzyc\OpenGLlearn\spadanko_grafika\include;C:\Users\BlueD\source\repos\grafika_spadanko\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\krzyc\OpenGLlearn\spadanko_grafika\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
