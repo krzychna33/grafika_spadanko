@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{518734b4-4e82-4ffe-98d9-bda6aebfbbe5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -23,13 +26,31 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="6.light_cube.frag" />
-    <None Include="6.light_cube.vert" />
-    <None Include="6.multiple_lights.frag" />
-    <None Include="6.multiple_lights.vert" />
+    <None Include="6.light_cube.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="6.light_cube.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="6.multiple_lights.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="6.multiple_lights.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="indicator.frag" />
-    <Text Include="indicator.vert" />
+    <Text Include="indicator.frag">
+      <Filter>Shaders</Filter>
+    </Text>
+    <Text Include="indicator.vert">
+      <Filter>Shaders</Filter>
+    </Text>
+    <Text Include="skybox.vert">
+      <Filter>Shaders</Filter>
+    </Text>
+    <Text Include="skybox.frag">
+      <Filter>Shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>
