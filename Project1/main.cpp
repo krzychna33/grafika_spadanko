@@ -39,6 +39,7 @@ Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
+float cameraAngle = 0.0;
 
 // timing
 float deltaTime = 0.0f;
@@ -338,6 +339,7 @@ int main()
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
+
 		lightingShader.setMat4("projection", projection);
 		lightingShader.setMat4("view", view);
 
@@ -382,7 +384,7 @@ int main()
 		glBindVertexArray(floorVAO);
 		glm::mat4 floorModel = glm::mat4(1.0f);
 		floorModel = glm::translate(floorModel, glm::vec3(0.0, -1.0, 0.0));
-		floorModel = glm::scale(floorModel, glm::vec3(12.0, 1.0, 12.0));
+		floorModel = glm::scale(floorModel, glm::vec3(24.0, 1.0, 24.0));
 		lightingShader.setMat4("model", floorModel);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
@@ -449,14 +451,22 @@ void processInput(GLFWwindow* window)
 
 	SPACE_PRESSED = (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS);
 
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(FORWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(LEFT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(RIGHT, deltaTime);
+	//if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	//	camera.ProcessKeyboard(FORWARD, deltaTime);
+	//if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	//	camera.ProcessKeyboard(BACKWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		cameraAngle -= 0.05;
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		cameraAngle += 0.05;
+	}
+
+	float theta = glm::radians(cameraAngle);
+	float pointX = glm::cos(theta) * 10;
+	float pointY = glm::sin(theta) * 10;
+
+	camera.Position = glm::vec3(pointX, 1, pointY);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
