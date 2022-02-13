@@ -156,8 +156,6 @@
     <None Include="6.multiple_lights.vert" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="indicator.frag" />
-    <Text Include="indicator.vert" />
     <Text Include="skybox.vert" />
     <Text Include="skybox.frag" />
   </ItemGroup>

@@ -40,12 +40,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="indicator.frag">
-      <Filter>Shaders</Filter>
-    </Text>
-    <Text Include="indicator.vert">
-      <Filter>Shaders</Filter>
-    </Text>
     <Text Include="skybox.vert">
       <Filter>Shaders</Filter>
     </Text>

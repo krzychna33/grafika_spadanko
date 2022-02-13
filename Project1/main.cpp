@@ -9,8 +9,6 @@
 #include <learnopengl/model.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-
-
 #include <iostream>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -25,7 +23,7 @@ bool SPACE_PRESSED = false;
 
 // settings
 const unsigned int SCR_WIDTH = 1000;
-const unsigned int SCR_HEIGHT = 750;
+const unsigned int SCR_HEIGHT = 1000;
 
 // konfiguracja gierki
 
@@ -141,7 +139,6 @@ int main()
 	};
 
 	float skyboxVertices[] = {
-		// positions          
 		-1.0f,  1.0f, -1.0f,
 		-1.0f, -1.0f, -1.0f,
 		 1.0f, -1.0f, -1.0f,
@@ -244,7 +241,6 @@ int main()
 	glEnableVertexAttribArray(2);
 
 	// SKYBOX
-
 	unsigned int skyboxVAO, skyboxVBO;
 	glGenVertexArrays(1, &skyboxVAO);
 	glGenBuffers(1, &skyboxVBO);
@@ -259,8 +255,6 @@ int main()
 	Model objModel("../resources/ARV_Craft_Low_Poly.obj");
 
 	unsigned int grassDiffuseMap = loadTexture("../resources/textures/grass.jpg");
-	unsigned int jackolaternDiffuseMap = loadTexture("../resources/textures/jackolatern.jpg");
-	// tekstura metalowa dla statku
 	unsigned int metalDiffuseMap = loadTexture("../resources/textures/metal-texture-7.jpg");
 
 	vector<std::string> faces
@@ -291,6 +285,9 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+		// LIGHTING CONFIGURATION
+
 		lightingShader.use();
 		lightingShader.setVec3("viewPos", camera.Position);
 		lightingShader.setFloat("material.shininess", 32.0f);
@@ -315,36 +312,28 @@ int main()
 			angle += 360 / lightsAmount;
 		}
 
-		//lightingShader.setVec3("pointLights[" + std::to_string(0) + "].position", pointLightPos);
-		//lightingShader.setVec3("pointLights[" + std::to_string(0) + "].ambient", 0.05f, 0.05f, 0.05f);
-		//lightingShader.setVec3("pointLights[" + std::to_string(0) + "].diffuse", 0.8f, 0.8f, 0.8f);
-		//lightingShader.setVec3("pointLights[" + std::to_string(0) + "].specular", 1.0f, 1.0f, 1.0f);
-		//lightingShader.setFloat("pointLights[" + std::to_string(0) + "].constant", 1.0f);
-		//lightingShader.setFloat("pointLights[" + std::to_string(0) + "].linear", 0.09);
-		//lightingShader.setFloat("pointLights[" + std::to_string(0) + "].quadratic", 0.032);
-
-
-		// SPOT LIGHT
-		lightingShader.setVec3("spotLight.position", pointLightPos);
-		lightingShader.setVec3("spotLight.direction", glm::vec3(0.0f, -1.0f, 0.0f));
-		lightingShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-		lightingShader.setVec3("spotLight.diffuse", 0.0f, 0.0f, 0.0f);
-		lightingShader.setVec3("spotLight.specular", 0.0f, 0.0f, 0.0f);
-		lightingShader.setFloat("spotLight.constant", 1.0f);
-		lightingShader.setFloat("spotLight.linear", 0.09);
-		lightingShader.setFloat("spotLight.quadratic", 0.032);
-		lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(20.0f)));
-		lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(30.0f)));
-
-
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 
 		lightingShader.setMat4("projection", projection);
 		lightingShader.setMat4("view", view);
 
+		// FLOOR 
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, grassDiffuseMap);
+		glBindVertexArray(floorVAO);
+		glm::mat4 floorModel = glm::mat4(1.0f);
+		floorModel = glm::translate(floorModel, glm::vec3(0.0, -1.0, 0.0));
+		floorModel = glm::scale(floorModel, glm::vec3(24.0, 1.0, 24.0));
+		lightingShader.setMat4("model", floorModel);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+
+		// SPACE SHIPS
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, metalDiffuseMap);
+
 
 		for (int i = 0; i < shipCount; i++)
 		{
@@ -379,14 +368,7 @@ int main()
 			}
 		}
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, grassDiffuseMap);
-		glBindVertexArray(floorVAO);
-		glm::mat4 floorModel = glm::mat4(1.0f);
-		floorModel = glm::translate(floorModel, glm::vec3(0.0, -1.0, 0.0));
-		floorModel = glm::scale(floorModel, glm::vec3(24.0, 1.0, 24.0));
-		lightingShader.setMat4("model", floorModel);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		// FLOATING LIGHTING CUBES
 
 		lightCubeShader.use();
 		lightCubeShader.setMat4("projection", projection);
@@ -398,8 +380,6 @@ int main()
 			float pointX = glm::cos(theta) * radius * 5;
 			float pointY = glm::sin(theta) * radius * 5;
 			
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, jackolaternDiffuseMap);
 			glBindVertexArray(lightCubeVAO);
 			glm::mat4 lightCubeModel = glm::mat4(1.0f);
 			lightCubeModel = glm::scale(lightCubeModel, glm::vec3(0.20, 1.0, 0.20));
@@ -410,12 +390,13 @@ int main()
 		}
 
 
-		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+		// SKYBOX 
+
+		glDepthFunc(GL_LEQUAL);
 		skyboxShader.use();
-		view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
+		view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
 		skyboxShader.setMat4("view", view);
 		skyboxShader.setMat4("projection", projection);
-		// skybox cube
 		glBindVertexArray(skyboxVAO);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
@@ -451,10 +432,6 @@ void processInput(GLFWwindow* window)
 
 	SPACE_PRESSED = (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS);
 
-	//if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-	//	camera.ProcessKeyboard(FORWARD, deltaTime);
-	//if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-	//	camera.ProcessKeyboard(BACKWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 		cameraAngle -= 0.05;
 	}
